@@ -6,7 +6,7 @@
     "component": "ConditionLayoutProduct",
     "composition": "children",
     "content": {
-      "$ref": "app:vtex.condition-layout#/definitions/ConditionLayoutProduct"
+      "$ref": "app:agenciaeplus.condition-layout#/definitions/ConditionLayoutProduct"
     }
   }
 }
