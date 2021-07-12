@@ -35,7 +35,7 @@ type HandlerArguments = {
   specificationProperties: { name: string; value?: string }
   areAllVariationsSelected: undefined
   isProductAvailable: undefined
-  isSellersMoreThan: { quantity: number }
+  hasMoreSellersThan: { quantity: number }
   isBestPrice: undefined
 }
 
@@ -84,14 +84,16 @@ export const HANDLERS: Handlers<ContextValues, HandlerArguments> = {
 
     return Boolean(isAvailable)
   },
-  isSellersMoreThan({ values, args }) {
+  hasMoreSellersThan({ values, args }) {
     const { sellers } = values
 
-    const productAvailable = sellers?.filter(seller => (
-      seller.commertialOffer.AvailableQuantity > 0
-    ))
+    const productAvailable = sellers?.filter(
+      (seller) => seller.commertialOffer.AvailableQuantity > 0
+    )
 
-    const isMoreThen = sellers?.length > args?.quantity && productAvailable.length > args?.quantity
+    const isMoreThen =
+      sellers?.length > args?.quantity &&
+      productAvailable.length > args?.quantity
 
     return Boolean(isMoreThen)
   },
@@ -99,15 +101,13 @@ export const HANDLERS: Handlers<ContextValues, HandlerArguments> = {
     const { sellers } = values
     const { priceRange } = values
 
-    const sellerDefault = sellers.filter(
-      seller => seller.sellerDefault
-    )[0]
+    const sellerDefault = sellers.filter((seller) => seller.sellerDefault)[0]
 
     const bestPrice = priceRange.sellingPrice.lowPrice
     const currentPrice = sellerDefault?.commertialOffer.Price
 
-    return Boolean(currentPrice == bestPrice);
-  }
+    return Boolean(currentPrice === bestPrice)
+  },
 }
 
 const ConditionLayoutProduct: StorefrontFunctionComponent<Props> = ({
@@ -130,7 +130,7 @@ const ConditionLayoutProduct: StorefrontFunctionComponent<Props> = ({
     productClusters,
     categoryTree,
     properties: specificationProperties,
-    priceRange
+    priceRange,
   } = product ?? {}
 
   const { itemId: selectedItemId, sellers } = selectedItem ?? {}
@@ -148,7 +148,7 @@ const ConditionLayoutProduct: StorefrontFunctionComponent<Props> = ({
       specificationProperties,
       areAllVariationsSelected,
       sellers,
-      priceRange
+      priceRange,
     }
 
     // We use `NoUndefinedField` to remove optionality + undefined values from the type
@@ -163,7 +163,7 @@ const ConditionLayoutProduct: StorefrontFunctionComponent<Props> = ({
     specificationProperties,
     areAllVariationsSelected,
     sellers,
-    priceRange
+    priceRange,
   ])
 
   // Sometimes it takes a while for useProduct() to return the correct results
