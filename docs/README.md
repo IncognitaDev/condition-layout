@@ -103,6 +103,7 @@ Possible values for the `subject` prop:
 | `areAllVariationsSelected` | Whether all product variations currently available on the UI were selected by the user (`true`) or not (`false`). | No arguments are expected. |
 | `isProductAvailable`                  | Whether the product is available (`true`) or not (`false`).  | No arguments are expected. |
 | `hasMoreSellersThan`                  | Whether the quantity of seller is more than argument passed.  | `{ quantity: number }`|
+| `isBestPrice` | Whether the current product has the best price | No arguments are expected. |
 
 ## Modus Operandi
 
