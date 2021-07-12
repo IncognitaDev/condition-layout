@@ -98,10 +98,9 @@ export const HANDLERS: Handlers<ContextValues, HandlerArguments> = {
     return Boolean(isMoreThen)
   },
   isBestPrice({ values }) {
-    const { sellers } = values
-    const { priceRange } = values
+    const { sellers, priceRange } = values
 
-    const sellerDefault = sellers.filter((seller) => seller.sellerDefault)[0]
+    const [sellerDefault] = sellers.filter((seller) => seller.sellerDefault)
 
     const bestPrice = priceRange.sellingPrice.lowPrice
     const currentPrice = sellerDefault?.commertialOffer.Price
