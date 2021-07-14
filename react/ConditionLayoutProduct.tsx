@@ -103,7 +103,7 @@ export const HANDLERS: Handlers<ContextValues, HandlerArguments> = {
     const bestPrice = priceRange.sellingPrice.lowPrice
     const currentPrice = sellerDefault?.commertialOffer.Price
 
-    return Boolean(currentPrice === bestPrice)
+    return currentPrice === bestPrice
   },
 }
 
