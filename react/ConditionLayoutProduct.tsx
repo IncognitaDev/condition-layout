@@ -21,6 +21,7 @@ type ContextValues = {
   selectedItemId: Item['itemId']
   specificationProperties: Product['properties']
   areAllVariationsSelected: boolean
+  items: Item[]
   sellers: Item['sellers']
   priceRange: Product['priceRange']
 }
@@ -34,6 +35,7 @@ type HandlerArguments = {
   selectedItemId: { id: string }
   specificationProperties: { name: string; value?: string }
   areAllVariationsSelected: undefined
+  isUniqueSku: undefined
   isProductAvailable: undefined
   hasMoreSellersThan: { quantity: number }
   isBestPrice: undefined
@@ -54,6 +56,9 @@ export const HANDLERS: Handlers<ContextValues, HandlerArguments> = {
   },
   areAllVariationsSelected({ values }) {
     return values.areAllVariationsSelected
+  },
+  isUniqueSku({ values }) {
+    return values.items.length === 1
   },
   productClusters({ values, args }) {
     return Boolean(
@@ -126,6 +131,7 @@ const ConditionLayoutProduct: StorefrontFunctionComponent<Props> = ({
     brandId,
     productClusters,
     categoryTree,
+    items,
     properties: specificationProperties,
     priceRange,
   } = product ?? {}
@@ -144,6 +150,7 @@ const ConditionLayoutProduct: StorefrontFunctionComponent<Props> = ({
       selectedItemId,
       specificationProperties,
       areAllVariationsSelected,
+      items,
       sellers,
       priceRange,
     }
@@ -159,6 +166,7 @@ const ConditionLayoutProduct: StorefrontFunctionComponent<Props> = ({
     selectedItemId,
     specificationProperties,
     areAllVariationsSelected,
+    items,
     sellers,
     priceRange,
   ])
