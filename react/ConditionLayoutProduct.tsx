@@ -89,6 +89,16 @@ export const HANDLERS: Handlers<ContextValues, HandlerArguments> = {
 
     return Boolean(isAvailable)
   },
+  isBestPrice({ values }) {
+    const { sellers, priceRange } = values
+
+    const [sellerDefault] = sellers.filter((seller) => seller.sellerDefault)
+
+    const bestPrice = priceRange.sellingPrice.lowPrice
+    const currentPrice = sellerDefault?.commertialOffer.Price
+
+    return currentPrice === bestPrice
+  },
   hasMoreSellersThan({ values, args }) {
     const { sellers } = values
 
@@ -99,16 +109,6 @@ export const HANDLERS: Handlers<ContextValues, HandlerArguments> = {
     const isMoreThan = productAvailable?.length > args?.quantity
 
     return isMoreThan
-  },
-  isBestPrice({ values }) {
-    const { sellers, priceRange } = values
-
-    const [sellerDefault] = sellers.filter((seller) => seller.sellerDefault)
-
-    const bestPrice = priceRange.sellingPrice.lowPrice
-    const currentPrice = sellerDefault?.commertialOffer.Price
-
-    return currentPrice === bestPrice
   },
 }
 
