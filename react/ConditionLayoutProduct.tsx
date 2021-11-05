@@ -115,9 +115,10 @@ export const HANDLERS: Handlers<ContextValues, HandlerArguments> = {
     const { sellers } = values
 
     const [sellerDefault] = sellers.filter((seller) => seller.sellerDefault)
+
     const sellingPrice = sellerDefault?.commertialOffer.Price
     const listPrice = sellerDefault?.commertialOffer.ListPrice
-    console.log(sellingPrice, listPrice)
+
     return Boolean(sellingPrice !== listPrice)
   },
 }
