@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.1] - 2021-11-05
+
 ### Added
 - Best price condition `isBestPrice`
 ## [2.3.0] - 2021-08-02
