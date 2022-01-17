@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react'
 import type { ComponentType } from 'react'
 import { useRuntime } from 'vtex.render-runtime'
+import { useQuery } from 'react-apollo'
 
 import ConditionLayout from './ConditionLayout'
 import type { NoUndefinedField, MatchType, Condition, Handlers } from './types'
+import getCategoryParentId from './graphql/getCategoryParentId.graphql'
 
 interface Props {
   conditions: Array<Condition<ContextValues, HandlerArguments>>
@@ -21,6 +23,7 @@ interface ContextValues {
 interface HandlerArguments {
   category: { ids: string[] }
   department: { ids: string[] }
+  categoryTree: { ids: string[] }
 }
 
 const handlersMap: Handlers<ContextValues, HandlerArguments> = {
@@ -38,6 +41,15 @@ const handlersMap: Handlers<ContextValues, HandlerArguments> = {
 
     return args.ids.includes(values.id)
   },
+  categoryTree({ values, args }) {
+    if (values.type !== 'department' && values.type !== 'category') {
+      return false
+    }
+
+    return (
+      args.ids.includes(values.id) || args.ids.includes(values.parentCategoryId)
+    )
+  },
 }
 
 const ConditionLayoutCategory: StorefrontFunctionComponent<Props> = ({
@@ -53,15 +65,22 @@ const ConditionLayoutCategory: StorefrontFunctionComponent<Props> = ({
     },
   } = useRuntime()
 
+  const { data } = useQuery(getCategoryParentId, {
+    variables: {
+      id,
+    },
+  })
+
   const values = useMemo<ContextValues>(() => {
     const bag = {
       id,
       type,
+      parentCategoryId: data?.category?.parentCategoryId,
     }
 
     // We use `NoUndefinedField` to remove optionality + undefined values from the type
     return bag as NoUndefinedField<typeof bag>
-  }, [id, type])
+  }, [id, type, data])
 
   return (
     <ConditionLayout
