@@ -7,6 +7,8 @@ import ConditionLayout from './ConditionLayout'
 import type { NoUndefinedField, MatchType, Condition, Handlers } from './types'
 import getCategoryParentId from './graphql/getCategoryParentId.graphql'
 
+type Decr = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
 interface Props {
   conditions: Array<Condition<ContextValues, HandlerArguments>>
   matchType?: MatchType
@@ -14,11 +16,21 @@ interface Props {
   Then?: ComponentType
 }
 
+interface CategoryTree {
+  categories: Array<CategoryItem<3>>
+}
+
+type CategoryItem<N extends number> = N extends 0
+  ? {
+      id: number
+    }
+  : { id: number; children: Array<CategoryItem<Decr[N]>> }
+
 interface ContextValues {
-  [key: string]: string
+  [key: string]: string | Array<CategoryItem<3>>
   id: string
   type: 'category' | 'department' | 'subcategory'
-  categoryTree: any
+  categoryTree: Array<CategoryItem<3>>
 }
 
 interface HandlerArguments {
@@ -52,10 +64,11 @@ const handlersMap: Handlers<ContextValues, HandlerArguments> = {
     }
 
     if (values.type === 'category') {
-      const department = values.categoryTree?.find((department: any) =>
-        department?.children?.find(
-          (category: any) => category?.id == values?.id
-        )
+      const department = values.categoryTree?.find(
+        (departmentItem: CategoryItem<2>) =>
+          departmentItem?.children?.find(
+            (category) => String(category?.id) === values?.id
+          )
       )
 
       return (
@@ -65,18 +78,20 @@ const handlersMap: Handlers<ContextValues, HandlerArguments> = {
     }
 
     if (values.type === 'subcategory') {
-      const department = values.categoryTree?.find((department: any) =>
-        department?.children?.find((category: any) =>
-          category?.children?.find(
-            (subcategory: any) => subcategory?.id == values?.id
+      const department = values.categoryTree?.find(
+        (departmentItem: CategoryItem<2>) =>
+          departmentItem?.children?.find((category) =>
+            category?.children?.find(
+              (subcategory) => String(subcategory?.id) === values?.id
+            )
           )
-        )
       )
 
-      const category = department?.children?.filter((category: any) =>
-        category?.children?.find(
-          (subcategory: any) => subcategory?.id == values?.id
-        )
+      const category = department?.children?.find(
+        (categoryItem: CategoryItem<1>) =>
+          categoryItem?.children?.find(
+            (subcategory) => String(subcategory?.id) === values?.id
+          )
       )
 
       return (
@@ -103,7 +118,7 @@ const ConditionLayoutCategory: StorefrontFunctionComponent<Props> = ({
     },
   } = useRuntime()
 
-  const { data } = useQuery(getCategoryParentId)
+  const { data } = useQuery<CategoryTree>(getCategoryParentId)
 
   const values = useMemo<ContextValues>(() => {
     const bag = {
