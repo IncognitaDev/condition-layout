@@ -1,5 +1,11 @@
-query getCategoryParentId($id: ID!) {
-  category(id: $id) {
-    parentCategoryId
+query getCategoryParentId {
+  categories {
+    id
+    children {
+      id
+      children {
+        id
+      }
+    }
   }
 }

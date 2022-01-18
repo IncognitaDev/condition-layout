@@ -17,7 +17,8 @@ interface Props {
 interface ContextValues {
   [key: string]: string
   id: string
-  type: 'category' | 'department'
+  type: 'category' | 'department' | 'subcategory'
+  categoryTree: any
 }
 
 interface HandlerArguments {
@@ -42,13 +43,50 @@ const handlersMap: Handlers<ContextValues, HandlerArguments> = {
     return args.ids.includes(values.id)
   },
   categoryTree({ values, args }) {
-    if (values.type !== 'department' && values.type !== 'category') {
+    if (
+      values.type !== 'department' &&
+      values.type !== 'category' &&
+      values.type !== 'subcategory'
+    ) {
       return false
     }
 
-    return (
-      args.ids.includes(values.id) || args.ids.includes(values.parentCategoryId)
-    )
+    if (values.type === 'category') {
+      const department = values.categoryTree?.find((department: any) =>
+        department?.children?.find(
+          (category: any) => category?.id == values?.id
+        )
+      )
+
+      return (
+        args.ids.includes(String(department?.id)) ||
+        args.ids.includes(values.id)
+      )
+    }
+
+    if (values.type === 'subcategory') {
+      const department = values.categoryTree?.find((department: any) =>
+        department?.children?.find((category: any) =>
+          category?.children?.find(
+            (subcategory: any) => subcategory?.id == values?.id
+          )
+        )
+      )
+
+      const category = department?.children?.filter((category: any) =>
+        category?.children?.find(
+          (subcategory: any) => subcategory?.id == values?.id
+        )
+      )
+
+      return (
+        args.ids.includes(String(department?.id)) ||
+        args.ids.includes(String(category?.id)) ||
+        args.ids.includes(values.id)
+      )
+    }
+
+    return args.ids.includes(values.id)
   },
 }
 
@@ -65,17 +103,13 @@ const ConditionLayoutCategory: StorefrontFunctionComponent<Props> = ({
     },
   } = useRuntime()
 
-  const { data } = useQuery(getCategoryParentId, {
-    variables: {
-      id,
-    },
-  })
+  const { data } = useQuery(getCategoryParentId)
 
   const values = useMemo<ContextValues>(() => {
     const bag = {
       id,
       type,
-      parentCategoryId: data?.category?.parentCategoryId,
+      categoryTree: data?.categories,
     }
 
     // We use `NoUndefinedField` to remove optionality + undefined values from the type
