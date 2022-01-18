@@ -6,7 +6,7 @@
     "component": "ConditionLayoutProduct",
     "composition": "children",
     "content": {
-      "$ref": "app:agenciaeplus.condition-layout#/definitions/ConditionLayoutProduct"
+      "$ref": "app:vizzent.condition-layout#/definitions/ConditionLayoutProduct"
     }
   },
   "condition-layout.binding": {
